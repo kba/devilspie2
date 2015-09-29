@@ -23,6 +23,7 @@
 /**
  *
  */
+int c_exec(lua_State *lua);
 int c_get_window_name(lua_State *lua);
 int c_get_window_has_name(lua_State *lua);
 

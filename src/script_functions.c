@@ -59,6 +59,27 @@
  */
 WnckWindow *current_window = NULL;
 
+int c_exec(lua_State *lua)
+{
+    int top = lua_gettop(lua);
+
+	int type = lua_type(lua, 1);
+	if (type != LUA_TSTRING) {
+		luaL_error(lua, "exec: %s", string_expected_as_indata_error);
+		return 0;
+	}
+
+	gchar *indata = (gchar*)lua_tostring(lua, 1);
+
+	WnckWindow *window = get_current_window();
+
+	if (window) {
+		gulong xid = wnck_window_get_xid(window);
+		system(indata);
+	}
+
+	return 0;
+}
 
 
 /**

@@ -78,6 +78,7 @@ init_script()
 void
 register_cfunctions(lua_State *lua)
 {
+	lua_register(lua, "exec", c_exec);
 	lua_register(lua, "get_window_name", c_get_window_name);
 	lua_register(lua, "get_window_has_name", c_get_window_has_name);
 
