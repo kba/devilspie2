@@ -53,6 +53,7 @@
 
 #include "error_strings.h"
 
+#include "string_utils.h"
 
 /**
  *
@@ -62,19 +63,26 @@ WnckWindow *current_window = NULL;
 int c_exec(lua_State *lua)
 {
     int top = lua_gettop(lua);
-
-	int type = lua_type(lua, 1);
+    int type = lua_type(lua, 1);
 	if (type != LUA_TSTRING) {
 		luaL_error(lua, "exec: %s", string_expected_as_indata_error);
 		return 0;
 	}
-
-	gchar *indata = (gchar*)lua_tostring(lua, 1);
+	char *indata = (char*)lua_tostring(lua, 1);
 
 	WnckWindow *window = get_current_window();
-
 	if (window) {
-		gulong xid = wnck_window_get_xid(window);
+		WnckApplication *application = wnck_window_get_application(window);
+        /* $application_name: Get application name */
+        const char *application_name = wnck_application_get_name(application);
+        indata = repl_str((char*)indata, "$application_name", application_name);
+        /* $window_id: Get window ID */
+        char window_id [50];
+        sprintf(window_id, "%x", wnck_window_get_xid(window));
+        indata = repl_str((char*)indata, "$window_id", window_id);
+        /* $window_name: Get window name */
+        const char *window_name = (char*)wnck_window_get_name(window);
+        indata = repl_str((char*)indata, "$window_name", window_name);
 		system(indata);
 	}
 
