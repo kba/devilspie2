@@ -23,8 +23,8 @@
 /**
  *
  */
-int c_exec(lua_State *lua);
 int c_get_window_name(lua_State *lua);
+int c_set_window_name(lua_State *lua);
 int c_get_window_has_name(lua_State *lua);
 
 int c_set_window_position(lua_State *lua);
@@ -42,6 +42,8 @@ int c_make_always_on_top(lua_State *lua);
 int c_set_on_top(lua_State *lua);
 
 int c_get_application_name(lua_State *lua);
+
+int c_exec(lua_State *lua);
 
 int c_debug_print(lua_State *lua);
 
@@ -72,6 +74,7 @@ int c_close_window(lua_State *lua);
 
 void set_current_window(WnckWindow *window);
 WnckWindow *get_current_window();
+WnckWindow *get_current_window_transient_for();
 
 int c_get_window_geometry(lua_State *lua);
 int c_get_client_window_geometry(lua_State *lua);
@@ -83,6 +86,7 @@ int c_get_window_is_maximized(lua_State *lua);
 int c_get_window_is_maximized_vertically(lua_State *lua);
 int c_get_window_is_maximized_horisontally(lua_State *lua);
 int c_get_window_is_pinned(lua_State *lua);
+int c_get_window_is_transient(lua_State *lua);
 
 int c_set_window_fullscreen(lua_State *lua);
 

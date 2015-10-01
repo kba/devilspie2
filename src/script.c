@@ -78,8 +78,8 @@ init_script()
 void
 register_cfunctions(lua_State *lua)
 {
-	lua_register(lua, "exec", c_exec);
 	lua_register(lua, "get_window_name", c_get_window_name);
+	lua_register(lua, "set_window_name", c_set_window_name);
 	lua_register(lua, "get_window_has_name", c_get_window_has_name);
 
 	lua_register(lua, "set_window_position", c_set_window_position);
@@ -92,11 +92,12 @@ register_cfunctions(lua_State *lua)
 
 	lua_register(lua, "get_application_name", c_get_application_name);
 
-	lua_register(lua, "make_always_on_top", c_make_always_on_top);
-
-	lua_register(lua, "set_on_top", c_set_on_top);
+	lua_register(lua, "exec", c_exec);
 
 	lua_register(lua, "debug_print", c_debug_print);
+
+	lua_register(lua, "make_always_on_top", c_make_always_on_top);
+	lua_register(lua, "set_on_top", c_set_on_top);
 
 	lua_register(lua, "shade", c_shade_window);
 	lua_register(lua, "unshade", c_unshade_window);
@@ -141,6 +142,7 @@ register_cfunctions(lua_State *lua)
 	             c_get_window_is_maximized_horisontally);
 	lua_register(lua, "get_window_is_pinned",
 	             c_get_window_is_pinned);
+	lua_register(lua, "get_window_is_transient", c_get_window_is_transient);
 
 	lua_register(lua, "set_window_below", c_set_window_below);
 	lua_register(lua, "set_window_above", c_set_window_above);

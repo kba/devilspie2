@@ -63,6 +63,10 @@ WnckWindow *current_window = NULL;
 int c_exec(lua_State *lua)
 {
     int top = lua_gettop(lua);
+	if (top != 1) {
+		luaL_error(lua, "set_window_type: %s", one_indata_expected_error);
+		return 0;
+	}
     int type = lua_type(lua, 1);
 	if (type != LUA_TSTRING) {
 		luaL_error(lua, "exec: %s", string_expected_as_indata_error);
@@ -77,9 +81,13 @@ int c_exec(lua_State *lua)
         const char *application_name = wnck_application_get_name(application);
         indata = repl_str((char*)indata, "$application_name", application_name);
         /* $window_id: Get window ID */
-        char window_id [50];
-        sprintf(window_id, "%x", wnck_window_get_xid(window));
+        char  window_id [50];
+        sprintf(window_id, "%lu", wnck_window_get_xid(window));
         indata = repl_str((char*)indata, "$window_id", window_id);
+        /* $window_hex_id: Get window ID as hex */
+        char window_hex_id [50];
+        sprintf(window_hex_id, "%x", wnck_window_get_xid(window));
+        indata = repl_str((char*)indata, "$window_hex_id", window_hex_id);
         /* $window_name: Get window name */
         const char *window_name = (char*)wnck_window_get_name(window);
         indata = repl_str((char*)indata, "$window_name", window_name);
@@ -87,6 +95,38 @@ int c_exec(lua_State *lua)
 	}
 
 	return 0;
+}
+
+/**
+ * sets the window name
+ */
+int c_set_window_name(lua_State *lua)
+{
+    int top = lua_gettop(lua);
+	if (top != 1) {
+		luaL_error(lua, "set_window_type: %s", one_indata_expected_error);
+		return 0;
+	}
+    int type = lua_type(lua, 1);
+	if (type != LUA_TSTRING) {
+		luaL_error(lua, "exec: %s", string_expected_as_indata_error);
+		return 0;
+	}
+	char *indata = (char*)lua_tostring(lua, 1);
+
+	WnckWindow *window = get_current_window();
+	if (window) {
+	    Display *display = gdk_x11_get_default_xdisplay();
+        XStoreName(display, wnck_window_get_xid(window),
+                indata);
+        XChangeProperty(display, wnck_window_get_xid(window),
+                XInternAtom(display, "_NET_WM_NAME", False),
+                XInternAtom(display, "UTF8_STRING", False),
+                8, PropModeReplace, (unsigned char *) indata,
+                strlen(indata));
+	}
+
+	return 1;
 }
 
 
@@ -1234,6 +1274,28 @@ int c_get_window_is_pinned(lua_State *lua)
 	}
 
 	lua_pushboolean(lua, is_pinned);
+
+	return 1;
+}
+
+/**
+ *
+ */
+int c_get_window_is_transient(lua_State *lua)
+{
+	int top = lua_gettop(lua);
+
+	if (top != 0) {
+		luaL_error(lua, "get_window_is_pinned: %s",
+		           no_indata_expected_error);
+		return 0;
+	}
+
+	WnckWindow *window = get_current_window();
+
+	gboolean is_transient = wnck_window_get_transient(window) > 0;
+
+	lua_pushboolean(lua, is_transient);
 
 	return 1;
 }
